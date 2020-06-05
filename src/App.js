@@ -1,19 +1,26 @@
-// 1. Think about the components that need to be built for your app, list them out
-// 2. Keep things SIMPLE, build them one at a time
+/*
 
-// resources:
-// Tilt react animation for logo: https://github.com/jonathandion/react-tilt
-// Clarifai client installation instructions: https://docs.clarifai.com/api-guide/api-overview/api-clients
-// Clarifai face detection model request: https://www.clarifai.com/models/face-detection-image-recognition-model-a403429f2ddf4b49b307e318f00e528b-detection
-// API Images information: https://docs.clarifai.com/api-guide/predict/images
-// Clarifai portal login: https://portal.clarifai.com/apps/e14675fae1a64944a9d60d8191dec255
-// model exports: https://github.com/Clarifai/clarifai-javascript/blob/master/src/index.js
+1. Think about the components that need to be built for your app, list them out
+2. Keep things SIMPLE, build them one at a time
+
+resources:
+Andrei's Github page of the app: https://github.com/aneagoie/face-recognition-brain/blob/master/src/App.js
+Tilt react animation for logo: https://github.com/jonathandion/react-tilt
+Clarifai client installation instructions: https://docs.clarifai.com/api-guide/api-overview/api-clients
+Clarifai face detection model request: https://www.clarifai.com/models/face-detection-image-recognition-model-a403429f2ddf4b49b307e318f00e528b-detection
+API Images information: https://docs.clarifai.com/api-guide/predict/images
+Clarifai portal login: https://portal.clarifai.com/apps/e14675fae1a64944a9d60d8191dec255
+model exports: https://github.com/Clarifai/clarifai-javascript/blob/master/src/index.js
+
+*/
 
 import React, { Component } from 'react';
 import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
+import SignIn from './components/SignIn/SignIn';
+import Register from './components/Register/Register';
 import Rank from './components/Rank/Rank';
 import Particles from 'react-particles-js';
 // const Clarifai = require('clarifai'); better way of writing this is below:
@@ -51,8 +58,13 @@ class App extends Component {
 			// we need a new state for the blue bounding box:
 			// it will just be an empty object that will contain the values that we receive
 			box: {},
+			// route state keeps track of where the user is on the page, it starts in the "signin" position
+			route: 'signin',
+			isSignedIn: false
 		}
 	}
+
+// 	all these functions are properties of the App class and must be dereferenced as part of an object when sending props to your components
 
 	calculateFaceLocation = (data) => {
 		const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -98,32 +110,47 @@ class App extends Component {
 			// calculatefacelocation takes the response and returns the object to displayFaceBox
 			.then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
 			.catch(err => console.log(err));
-			// function(response) {
-			//   // do something with response
-			// //   console.log(response);
-			// //  using this format below, you are "walking" through the JSON data that is returned from the API to PRINT the data we want
-			// //   console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
-			// 	// we want to call calculatefacelocation with the response data and since we're using classes, we'll have use "this(dot)"
-			// 	this.calculateFaceLocation(response);
-			// },
+	}
+
+	// we need to dynamically change the route
+	onRouteChange = (route) => {
+		if (route === 'signout') {
+			this.setState({isSignedIn: false})
+		}
+		// if we are at the home page, past the login, we want to set "signedIn" as true
+		else if (route === 'home') {
+			this.setState({isSignedIn: true})
+		}
+		this.setState({route: route});
 	}
 
 	render() {
+		const { isSignedIn, route, box, imageUrl } = this.state;
 		return (
 			<div>
 				<Particles className='particles'/>
 				{/* <Particles params={particleOptions} /> */}
-				<Navigation />
-				<Logo />
-				{/* username and rank compared to other users who have submitted pictures */}
-				<Rank />
-				{/* OnInputChange is a property of the app component, so it needs to have "this." attached */}
-				<ImageLinkForm 
-					onInputChange={this.onInputChange} 
-					onButtonSubmit={this.onButtonSubmit}
-				/>
-				{/* to display the photo that is being put through the site */}
-				<FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
+				<Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
+				{route === 'home'
+					? <div>
+						<Logo />
+						{/* username and rank compared to other users who have submitted pictures */}
+						<Rank />
+						{/* OnInputChange is a property of the app component, so it needs to have "this." attached */}
+						<ImageLinkForm 
+							onInputChange={this.onInputChange} 
+							onButtonSubmit={this.onButtonSubmit}
+						/>
+						{/* to display the photo that is being put through the site */}
+						<FaceRecognition box={box} imageUrl={imageUrl}/>
+						</div>
+					:  (
+						// both routes are needed in case you signout to bring the user back to the start
+						route === 'signin' || route === 'signout'
+						? <SignIn onRouteChange={this.onRouteChange}/>
+						: <Register onRouteChange={this.onRouteChange}/>
+					)
+				}
 			</div>
 		);
 	}
