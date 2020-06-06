@@ -2,7 +2,7 @@ import React from 'react'
 import './ImageLinkForm.css'
 
 // instead of props.onInputChange, we just destructure it as:
-export default function ImageLinkForm({ onInputChange, onButtonSubmit }) {
+export default function ImageLinkForm({ onInputChange, onPictureSubmit }) {
 	return (
 		<div>
 			<p className='f3 tc'>
@@ -13,7 +13,7 @@ export default function ImageLinkForm({ onInputChange, onButtonSubmit }) {
 					<input className='f4 pa2 w-70 center' type="tex" onChange={onInputChange}/>
 						<button className='w-30 grow f4 link ph3 pv2 dib white bg-light-purple'
 						// onclick event that listens for the onbuttonsubmit
-						onClick={onButtonSubmit}
+						onClick={onPictureSubmit}
 						>Detect</button>
 				</div>
 			</div>

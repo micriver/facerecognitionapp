@@ -31,20 +31,8 @@ const app = new Clarifai.App({
 	apiKey: '92c94abb70c3409f9125b334bbc742a4'
 });
 
-// const particleOptions = {
-// 	polygon: {
-// 		enable: true,
-// 		type: 'inside',
-// 		move: {
-// 			radius: 10
-// 		},
-// 		url: 'path/to/svg.svg'
-// 	}
-// }
-
 // We definitely need to create a state so that our app knows what the value is that the user enters, remembers it, and updates it anytime it gets changed.
 // In order to do that, we will define a constructor
-
 class App extends Component {
 // function App() {
 	constructor() {
@@ -60,9 +48,35 @@ class App extends Component {
 			box: {},
 			// route state keeps track of where the user is on the page, it starts in the "signin" position
 			route: 'signin',
-			isSignedIn: false
+			isSignedIn: false,
+			user: {
+				id: '',
+				name: '',
+				email: '',
+				entries: 0,
+				joined: ''
+			}
 		}
 	}
+
+	loadUser = (data) => {
+		// update the state with the user we recieve from child "register"
+		this.setState({user: {
+			id: data.id,
+			name: data.name,
+			email: data.email,
+			entries: data.entries,
+			joined: data.joined
+		}})
+	}
+
+	// in order for our React App to communicate with our server that we've created, we do this to check:
+	// componentDidMount() {
+	// 	// url and portnumber for server we've created
+	// 	fetch('http://localhost:3000')
+	// 		.then(response => response.json())
+	// 		.then(console.log);
+	// }
 
 // 	all these functions are properties of the App class and must be dereferenced as part of an object when sending props to your components
 
@@ -96,19 +110,35 @@ class App extends Component {
 		this.setState({input: event.target.value});
 	}
 
-	onButtonSubmit = () => {
+	onPictureSubmit = () => {
 		// console.log('click');
 		// set the imageUrl with whatever the input is
-		this.setState({imageUrl: this.state.input})
-
+		this.setState({imageUrl: this.state.input});
 		// "app(dot)" is the API key variable we created above
-		app.models.predict(
-			Clarifai.FACE_DETECT_MODEL,
-			// URL
-			this.state.input
-			)
+		app.models
+			.predict(
+				Clarifai.FACE_DETECT_MODEL,
+				// URL
+				this.state.input)
 			// calculatefacelocation takes the response and returns the object to displayFaceBox
-			.then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
+			.then(response => {
+				if (response) {
+				fetch('http://localhost:3000/image', {
+					method: 'put',
+					headers: {'Content-Type': 'application/json'},
+					body: JSON.stringify({
+						// this is the state the user has when they sign in 
+						id: this.state.user.id
+						})
+					})
+					.then(response => response.json())
+					.then(count => {
+						// since we're just changing the user object
+						this.setState(Object.assign(this.state.user, { entries: count }))
+					})
+				}
+			this.displayFaceBox(this.calculateFaceLocation(response))
+			})
 			.catch(err => console.log(err));
 	}
 
@@ -135,11 +165,11 @@ class App extends Component {
 					? <div>
 						<Logo />
 						{/* username and rank compared to other users who have submitted pictures */}
-						<Rank />
+						<Rank name={this.state.user.name} entries={this.state.user.entries}/>
 						{/* OnInputChange is a property of the app component, so it needs to have "this." attached */}
 						<ImageLinkForm 
 							onInputChange={this.onInputChange} 
-							onButtonSubmit={this.onButtonSubmit}
+							onPictureSubmit={this.onPictureSubmit}
 						/>
 						{/* to display the photo that is being put through the site */}
 						<FaceRecognition box={box} imageUrl={imageUrl}/>
@@ -147,8 +177,9 @@ class App extends Component {
 					:  (
 						// both routes are needed in case you signout to bring the user back to the start
 						route === 'signin' || route === 'signout'
-						? <SignIn onRouteChange={this.onRouteChange}/>
-						: <Register onRouteChange={this.onRouteChange}/>
+						? <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+						// pass functions to children components
+						: <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
 					)
 				}
 			</div>
