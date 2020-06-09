@@ -23,13 +23,11 @@ import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
 import Rank from './components/Rank/Rank';
 import Particles from 'react-particles-js';
-// const Clarifai = require('clarifai'); better way of writing this is below:
-import Clarifai from 'clarifai';
 import './App.css'
 
-const app = new Clarifai.App({
-	apiKey: '92c94abb70c3409f9125b334bbc742a4'
-});
+// const app = new Clarifai.App({
+// 	apiKey: '92c94abb70c3409f9125b334bbc742a4'
+// });
 
 const initialState = {
 	// the input is what the user will type, property on the left, empty string on the right
@@ -116,12 +114,15 @@ class App extends Component {
 		// console.log('click');
 		// set the imageUrl with whatever the input is
 		this.setState({imageUrl: this.state.input});
-		// "app(dot)" is the API key variable we created above
-		app.models
-			.predict(
-				Clarifai.FACE_DETECT_MODEL,
-				// URL
-				this.state.input)
+		fetch('http://localhost:3000/imageurl', {
+			method: 'post',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({
+				// this is the state the user has when they sign in 
+				input: this.state.input
+				})
+			})
+			.then(response => response.json())
 			// calculatefacelocation takes the response and returns the object to displayFaceBox
 			.then(response => {
 				if (response) {
@@ -138,6 +139,8 @@ class App extends Component {
 						// since we're just changing the user object
 						this.setState(Object.assign(this.state.user, { entries: count }))
 					})
+					// always be error handling after (.then)
+					.catch(console.log)
 				}
 			this.displayFaceBox(this.calculateFaceLocation(response))
 			})
