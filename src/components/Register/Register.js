@@ -62,9 +62,9 @@ class Register extends React.Component {
 		.then(response => response.json())
 		.then(user => {
 			// if we get a user back, we take them to the homepage
-			if (this.state.user) {
+			if (user) {
 				// loading the user
-				this.props.loadUser(this.state.user)
+				this.props.loadUser(user)
 				// then changing the route to the home page of the app
 				this.props.onRouteChange('home')
 			}
