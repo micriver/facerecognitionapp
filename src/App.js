@@ -31,6 +31,26 @@ const app = new Clarifai.App({
 	apiKey: '92c94abb70c3409f9125b334bbc742a4'
 });
 
+const initialState = {
+	// the input is what the user will type, property on the left, empty string on the right
+	input: '',
+	// imageUrl should be displayed when we click on submit
+	imageUrl: '',
+	// we need a new state for the blue bounding box:
+	// it will just be an empty object that will contain the values that we receive
+	box: {},
+	// route state keeps track of where the user is on the page, it starts in the "signin" position
+	route: 'signin',
+	isSignedIn: false,
+	user: {
+		id: '',
+		name: '',
+		email: '',
+		entries: 0,
+		joined: ''
+	}
+}
+
 // We definitely need to create a state so that our app knows what the value is that the user enters, remembers it, and updates it anytime it gets changed.
 // In order to do that, we will define a constructor
 class App extends Component {
@@ -38,25 +58,7 @@ class App extends Component {
 	constructor() {
 		// call super to be able to use "this" variable
 		super();
-		this.state = {
-			// the input is what the user will type, property on the left, empty string on the right
-			input: '',
-			// imageUrl should be displayed when we click on submit
-			imageUrl: '',
-			// we need a new state for the blue bounding box:
-			// it will just be an empty object that will contain the values that we receive
-			box: {},
-			// route state keeps track of where the user is on the page, it starts in the "signin" position
-			route: 'signin',
-			isSignedIn: false,
-			user: {
-				id: '',
-				name: '',
-				email: '',
-				entries: 0,
-				joined: ''
-			}
-		}
+		this.state = initialState;
 	}
 
 	loadUser = (data) => {
@@ -145,7 +147,7 @@ class App extends Component {
 	// we need to dynamically change the route
 	onRouteChange = (route) => {
 		if (route === 'signout') {
-			this.setState({isSignedIn: false})
+			this.setState(initialState)
 		}
 		// if we are at the home page, past the login, we want to set "signedIn" as true
 		else if (route === 'home') {
