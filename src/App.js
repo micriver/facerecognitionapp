@@ -6,11 +6,7 @@
 resources:
 Andrei's Github page of the app: https://github.com/aneagoie/face-recognition-brain/blob/master/src/App.js
 Tilt react animation for logo: https://github.com/jonathandion/react-tilt
-Clarifai client installation instructions: https://docs.clarifai.com/api-guide/api-overview/api-clients
-Clarifai face detection model request: https://www.clarifai.com/models/face-detection-image-recognition-model-a403429f2ddf4b49b307e318f00e528b-detection
-API Images information: https://docs.clarifai.com/api-guide/predict/images
-Clarifai portal login: https://portal.clarifai.com/apps/e14675fae1a64944a9d60d8191dec255
-model exports: https://github.com/Clarifai/clarifai-javascript/blob/master/src/index.js
+
 
 */
 
@@ -24,10 +20,6 @@ import Register from './components/Register/Register';
 import Rank from './components/Rank/Rank';
 import Particles from 'react-particles-js';
 import './App.css'
-
-// const app = new Clarifai.App({
-// 	apiKey: '92c94abb70c3409f9125b334bbc742a4'
-// });
 
 const initialState = {
 	// the input is what the user will type, property on the left, empty string on the right
@@ -114,7 +106,7 @@ class App extends Component {
 		// console.log('click');
 		// set the imageUrl with whatever the input is
 		this.setState({imageUrl: this.state.input});
-		fetch('http://localhost:3000/imageurl', {
+		fetch('https://morning-caverns-49945.herokuapp.com/imageurl', {
 			method: 'post',
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
@@ -126,7 +118,7 @@ class App extends Component {
 			// calculatefacelocation takes the response and returns the object to displayFaceBox
 			.then(response => {
 				if (response) {
-				fetch('http://localhost:3000/image', {
+				fetch('https://morning-caverns-49945.herokuapp.com/image', {
 					method: 'put',
 					headers: {'Content-Type': 'application/json'},
 					body: JSON.stringify({
