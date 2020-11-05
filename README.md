@@ -2,7 +2,7 @@
 
 <p align="center">
   <div align="center">
-   <a href="https://github.com/micriver/facerecognitionapp"><img style="border-radius: 16px; box-shadow: 1px 8px 14px rgba(0, 0, 0, 0.4);"src="./assets/screenshots/facial_recognition_app.png" width="700px"</img></a><br>
+   <a href="https://github.com/micriver/facerecognitionapp"><img style="border-radius: 20px; box-shadow: 1px 8px 14px rgba(0, 0, 0, 0.4);"src="./assets/screenshots/facial_recognition_app.png" width="700px"</img></a><br>
   </div>
 </p>
 
@@ -17,10 +17,6 @@ The sites currently live on Heroku, 👉🏼 &nbsp;[here](facerecognition23.hero
 
 ## Project Goals
 
-The Udemy course covered HTML, CSS, Javascript and React.js. There were tons of mini projects and code-along exercises throughout the course but this project was the one I looked forward to most. We created the front-end, the database and routed everything. Then after the project was complete, we were shown how to host it live!
+The Udemy course taught HTML, CSS, Javascript and React.js. There were tons of mini projects and code-along exercises throughout the course but this project was the one I looked forward to most. We wrote the code for the application from scratch, then shown how to deploy it live!
 
-In the future, I'd like to make it more my own; change the background, move components around and try different things. Right now, it's someone else's code but still something that I put work into.
-
----
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+In the future, I'd like to make it more my own; change the background, move components around and try different things. Right now, it's someone else's code but still something that I learned a lot from.
